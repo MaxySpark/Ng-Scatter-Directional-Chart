@@ -1,0 +1,27 @@
+{
+  "name": "ng-scatter-directional-chart",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "@angular/common": "^10.0.14",
+    "@angular/core": "^10.0.14"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxySpark/Ng-Scatter-Directional-Chart.git"
+  },
+  "keywords": [
+    "chart",
+    "angular",
+    "scatter",
+    "directional"
+  ],
+  "author": "MaxySpark <me@maxyspark.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MaxySpark/Ng-Scatter-Directional-Chart/issues"
+  },
+  "homepage": "https://github.com/MaxySpark/Ng-Scatter-Directional-Chart#readme"
+}

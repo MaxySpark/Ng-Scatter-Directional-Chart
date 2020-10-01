@@ -6,5 +6,12 @@
 */
 {
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./projects/ng-scatter-directional-chart/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ng-scatter-directional-chart/tsconfig.spec.json"
+    }
+]
 }
