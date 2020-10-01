@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'lib-ng-scatter-directional-chart',
+  // tslint:disable-next-line:component-selector
+  selector: 'ng-scatter-directional-chart',
   template: `
-    <div #wrapper [ngStyle]="style">
+    <div #wrapper [ngStyle]="style" (window:resize)="onResize($event)">
       <canvas #canvas style="width: 100%; height: 100%; transform: rotateZ(270deg);"></canvas>
     </div>
   `,
@@ -25,6 +26,7 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
   @Input() lineColor = 'black';
   @Input() lineNumber = false;
   @Input() backgroundImage: string = null;
+  @Input() backgroundColor: string = null;
 
   @Input() data = [];
 
@@ -36,35 +38,24 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
   constructor() { }
 
   ngOnInit(): void {
+    const bgc = this.backgroundColor ? { 'background-color': this.backgroundColor } : {};
     const bg = this.backgroundImage ? { 'background-image': `url('${this.backgroundImage}')` } : {};
 
     this.style = {
       ...{
-        height: '500px',
-        width: '500px',
+        width: '100%',
         'background-color': 'transparent',
         'background-position': 'center',
         'background-repeat': 'no-repeat'
       },
       ...this.style,
-      ...bg
+      ...bg,
+      ...bgc
     };
   }
 
   ngAfterViewInit(): void {
-    this.canvas.nativeElement.width = this.wrapper.nativeElement.clientWidth;
-    this.canvas.nativeElement.height = this.wrapper.nativeElement.clientHeight;
-    this.ratioX = this.canvas.nativeElement.offsetWidth / this.dataPoint;
-    this.ratioY = this.canvas.nativeElement.offsetHeight / this.dataPoint;
-    this.ctx = this.canvas.nativeElement.getContext('2d');
-
-    for (let i = 0; i < this.data.length - 1; i++) {
-      const x1 = this.data[i].x * this.ratioX;
-      const y1 = this.data[i].y * this.ratioY;
-      const x2 = this.data[i + 1].x * this.ratioX;
-      const y2 = this.data[i + 1].y * this.ratioY;
-      this.plot(i, x1, x2, y1, y2);
-    }
+    this.plotGraph();
   }
 
   plot(b: number, y1: number, y2: number, x1: number, x2: number): void {
@@ -141,6 +132,27 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
     }
 
     this.ctx.restore();
+  }
+
+  onResize(event): void {
+    this.plotGraph();
+  }
+
+  plotGraph(): void {
+    this.wrapper.nativeElement.style.height = this.wrapper.nativeElement.offsetWidth + 'px';
+    this.canvas.nativeElement.width = this.wrapper.nativeElement.clientWidth;
+    this.canvas.nativeElement.height = this.wrapper.nativeElement.clientHeight;
+    this.ratioX = this.canvas.nativeElement.offsetWidth / this.dataPoint;
+    this.ratioY = this.canvas.nativeElement.offsetHeight / this.dataPoint;
+    this.ctx = this.canvas.nativeElement.getContext('2d');
+
+    for (let i = 0; i < this.data.length - 1; i++) {
+      const x1 = this.data[i].x * this.ratioX;
+      const y1 = this.data[i].y * this.ratioY;
+      const x2 = this.data[i + 1].x * this.ratioX;
+      const y2 = this.data[i + 1].y * this.ratioY;
+      this.plot(i, x1, x2, y1, y2);
+    }
   }
 
 }
