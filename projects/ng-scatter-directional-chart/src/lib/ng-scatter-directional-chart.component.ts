@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -11,7 +11,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '
   styles: [
   ]
 })
-export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit {
+export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('wrapper') wrapper: ElementRef<HTMLDivElement>;
 
@@ -27,6 +27,7 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
   @Input() lineNumber = false;
   @Input() backgroundImage: string = null;
   @Input() backgroundColor: string = null;
+  @Input() direction = false;
 
   @Input() data = [];
 
@@ -58,6 +59,10 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
     this.plotGraph();
   }
 
+  ngOnChanges(): void {
+    this.plotGraph();
+  }
+
   plot(b: number, y1: number, y2: number, x1: number, x2: number): void {
     this.ctx.translate(0, 0);
     this.ctx.beginPath();
@@ -66,9 +71,9 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
     const magnitude = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
     const i = (this.pointRadius * (x2 - x1)) / magnitude;
     const j = (this.pointRadius * (y2 - y1)) / magnitude;
-    if (!magnitude) {
-      console.log(b + 1, magnitude, x1, y1, x2, y2, i, j, x1 + i, y1 + j);
-    }
+    // if (!magnitude) {
+    //   console.log(b + 1, magnitude, x1, y1, x2, y2, i, j, x1 + i, y1 + j);
+    // }
     this.ctx.moveTo(x1 + i, y1 + j);
     this.ctx.lineTo(x2, y2);
     this.ctx.stroke();
@@ -111,20 +116,24 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
     }
 
     this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.lineWidth = this.lineWidth;
-    this.ctx.strokeStyle = this.lineColor;
-    this.ctx.translate(0, 0);
-    this.ctx.translate((x2 + x1) / 2, (y2 + y1) / 2);
-    this.ctx.rotate(lineAngle);
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-6 * inverter, -6);
-    this.ctx.stroke();
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-6 * inverter, 6);
-    this.ctx.stroke();
-    this.ctx.restore();
-    this.ctx.save();
+
+    if (this.direction) {
+      this.ctx.beginPath();
+      this.ctx.lineWidth = this.lineWidth;
+      this.ctx.strokeStyle = this.lineColor;
+      this.ctx.translate(0, 0);
+      this.ctx.translate((x2 + x1) / 2, (y2 + y1) / 2);
+      this.ctx.rotate(lineAngle);
+      this.ctx.moveTo(0, 0);
+      this.ctx.lineTo(-6 * inverter, -6);
+      this.ctx.stroke();
+      this.ctx.moveTo(0, 0);
+      this.ctx.lineTo(-6 * inverter, 6);
+      this.ctx.stroke();
+      this.ctx.restore();
+      this.ctx.save();
+    }
+
     this.ctx.translate((x2 + x1) / 2, (y2 + y1) / 2);
 
     if (this.lineNumber) {
@@ -139,19 +148,21 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
   }
 
   plotGraph(): void {
-    this.wrapper.nativeElement.style.height = this.wrapper.nativeElement.offsetWidth + 'px';
-    this.canvas.nativeElement.width = this.wrapper.nativeElement.clientWidth;
-    this.canvas.nativeElement.height = this.wrapper.nativeElement.clientHeight;
-    this.ratioX = this.canvas.nativeElement.offsetWidth / this.dataPoint;
-    this.ratioY = this.canvas.nativeElement.offsetHeight / this.dataPoint;
-    this.ctx = this.canvas.nativeElement.getContext('2d');
+    if (this.wrapper && this.canvas) {
+      this.wrapper.nativeElement.style.height = this.wrapper.nativeElement.offsetWidth + 'px';
+      this.canvas.nativeElement.width = this.wrapper.nativeElement.clientWidth;
+      this.canvas.nativeElement.height = this.wrapper.nativeElement.clientHeight;
+      this.ratioX = this.canvas.nativeElement.offsetWidth / this.dataPoint;
+      this.ratioY = this.canvas.nativeElement.offsetHeight / this.dataPoint;
+      this.ctx = this.canvas.nativeElement.getContext('2d');
 
-    for (let i = 0; i < this.data.length - 1; i++) {
-      const x1 = this.data[i].x * this.ratioX;
-      const y1 = this.data[i].y * this.ratioY;
-      const x2 = this.data[i + 1].x * this.ratioX;
-      const y2 = this.data[i + 1].y * this.ratioY;
-      this.plot(i, x1, x2, y1, y2);
+      for (let i = 0; i < this.data.length - 1; i++) {
+        const x1 = this.data[i].x * this.ratioX;
+        const y1 = this.data[i].y * this.ratioY;
+        const x2 = this.data[i + 1].x * this.ratioX;
+        const y2 = this.data[i + 1].y * this.ratioY;
+        this.plot(i, x1, x2, y1, y2);
+      }
     }
   }
 
