@@ -1,19 +1,48 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { HelipopperDirective } from '@ngneat/helipopper';
+
+interface CircleCenter {
+  index: number;
+  original: { x: number; y: number };
+  transformed: { x: number; y: number };
+  point: { x: number; y: number };
+}
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'ng-scatter-directional-chart',
   template: `
     <div #wrapper [ngStyle]="style" (window:resize)="onResize($event)">
+    <span #popper="helipopper"
+      [helipopper]="tpl"
+      helipopperVariation="popper"
+      helipopperPlacement="auto"
+      [helipopperOffset]="hpOffset"
+      helipopperClass="sg-hp-custom"
+    ></span>
       <canvas #canvas style="width: 100%; height: 100%; transform: rotateZ(270deg);"></canvas>
+
+      <ng-template #tpl>
+        <div class="popup">
+          {{popUpData.text}}
+        </div>
+      </ng-template>
+
     </div>
   `,
   styles: [
+    `.popup {
+      font-size: medium;
+      font-weight: bold;
+    }`
   ]
 })
 export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('wrapper') wrapper: ElementRef<HTMLDivElement>;
+
+  @ViewChild('popper')
+  popper: HelipopperDirective;
 
   @Input() style: object = {};
 
@@ -35,6 +64,18 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
   ratioY = 1;
 
   ctx: CanvasRenderingContext2D;
+
+  centerPoints: CircleCenter[] = [];
+
+  popUpData = {
+    x: 0,
+    y: 0,
+    text: ''
+  };
+
+  @Input() pointText: string[] = [];
+
+  @Input() hpOffset: number[] = [0, 10];
 
   constructor() { }
 
@@ -156,12 +197,50 @@ export class NgScatterDirectionalChartComponent implements OnInit, AfterViewInit
       this.ratioY = this.canvas.nativeElement.offsetHeight / this.dataPoint;
       this.ctx = this.canvas.nativeElement.getContext('2d');
 
+      this.centerPoints = this.data.map((o, i) => {
+        const tmp = { x: o.x * this.ratioX, y: o.y * this.ratioY };
+        return {
+          index: i,
+          original: o,
+          transformed: {
+            x: tmp.x,
+            y: this.canvas.nativeElement.offsetHeight - tmp.y
+          },
+          point: tmp
+        };
+      });
+
       for (let i = 0; i < this.data.length - 1; i++) {
         const x1 = this.data[i].x * this.ratioX;
         const y1 = this.data[i].y * this.ratioY;
         const x2 = this.data[i + 1].x * this.ratioX;
         const y2 = this.data[i + 1].y * this.ratioY;
         this.plot(i, x1, x2, y1, y2);
+      }
+    }
+
+    this.ctx.translate(0, 0);
+    this.ctx.translate(this.canvas.nativeElement.offsetWidth / 2, this.canvas.nativeElement.offsetWidth / 2);
+    this.ctx.rotate(90 * Math.PI / 180);
+    this.ctx.translate(-this.canvas.nativeElement.offsetWidth / 2, -this.canvas.nativeElement.offsetWidth / 2);
+    this.ctx.save();
+  }
+
+  getMousePosition(canvas: HTMLCanvasElement, event: MouseEvent) {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    for (const center of this.centerPoints) {
+      // circleRadius
+      const x1 = center.transformed.x;
+      const y1 = center.transformed.y;
+      if (((x1 - x) ** 2 + (y1 - y) ** 2) ** (1 / 2) <= this.pointRadius) {
+        this.popUpData.x = center.original.x;
+        this.popUpData.y = center.original.y;
+        this.popUpData.text = this.pointText[center.index];
+        this.popper.show();
+        break;
       }
     }
   }

@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { NgScatterDirectionalChartComponent } from './ng-scatter-directional-chart.component';
 
-
+import { HelipopperModule } from '@ngneat/helipopper';
 
 @NgModule({
   declarations: [NgScatterDirectionalChartComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    HelipopperModule
   ],
   exports: [NgScatterDirectionalChartComponent]
 })

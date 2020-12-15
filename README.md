@@ -1,27 +1,66 @@
 # NgScatterDirectionalChart
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.5.
+```scss
+@import './../node_modules/tippy.js/dist/tippy.css';
+@import './../node_modules/tippy.js/themes/light.css';
+@import './../node_modules/tippy.js/animations/scale.css';
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+.tippy-content {
+  position: relative;
+}
 
-## Code scaffolding
+.tippy-close {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 9px;
+  right: 9px;
+  fill: rgb(158, 160, 165);
+  cursor: pointer;
+  z-index: 1;
+}
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+.tippy-box {
+  border-radius: 4px;
+  font-size: 11px;
 
-## Build
+  .tippy-content {
+    padding: 4px 6px;
+  }
+}
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+.tippy-box[data-theme~='light'] {
+  font-size: 12px;
+  word-break: break-word;
+  border-radius: 0;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.2);
+  color: rgb(79, 80, 83);
+  width: 350px;
 
-## Running unit tests
+  .tippy-content {
+    padding: 13px 20px 13px 20px;
+  }
+}
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+.tippy-arrow::before {
+  box-shadow: -4px 4px 14px -4px rgba(0, 0, 0, 0.2);
+}
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
+.sg-hp-custom {
+  .tippy-box {
+    border-radius: 5px !important;
+  }
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+  .tippy-close {
+    display: none !important;
+  }
+  .tippy-arrow {
+    display: none;
+  }
+}
+
+```

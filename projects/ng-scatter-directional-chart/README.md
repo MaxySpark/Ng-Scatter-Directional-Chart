@@ -1,24 +1,66 @@
 # NgScatterDirectionalChart
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.14.
+```scss
+@import './../node_modules/tippy.js/dist/tippy.css';
+@import './../node_modules/tippy.js/themes/light.css';
+@import './../node_modules/tippy.js/animations/scale.css';
 
-## Code scaffolding
 
-Run `ng generate component component-name --project ng-scatter-directional-chart` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ng-scatter-directional-chart`.
-> Note: Don't forget to add `--project ng-scatter-directional-chart` or else it will be added to the default project in your `angular.json` file. 
+.tippy-content {
+  position: relative;
+}
 
-## Build
+.tippy-close {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 9px;
+  right: 9px;
+  fill: rgb(158, 160, 165);
+  cursor: pointer;
+  z-index: 1;
+}
 
-Run `ng build ng-scatter-directional-chart` to build the project. The build artifacts will be stored in the `dist/` directory.
+.tippy-box {
+  border-radius: 4px;
+  font-size: 11px;
 
-## Publishing
+  .tippy-content {
+    padding: 4px 6px;
+  }
+}
 
-After building your library with `ng build ng-scatter-directional-chart`, go to the dist folder `cd dist/ng-scatter-directional-chart` and run `npm publish`.
+.tippy-box[data-theme~='light'] {
+  font-size: 12px;
+  word-break: break-word;
+  border-radius: 0;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.2);
+  color: rgb(79, 80, 83);
+  width: 350px;
 
-## Running unit tests
+  .tippy-content {
+    padding: 13px 20px 13px 20px;
+  }
+}
 
-Run `ng test ng-scatter-directional-chart` to execute the unit tests via [Karma](https://karma-runner.github.io).
+.tippy-arrow::before {
+  box-shadow: -4px 4px 14px -4px rgba(0, 0, 0, 0.2);
+}
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+.sg-hp-custom {
+  .tippy-box {
+    border-radius: 5px !important;
+  }
+
+  .tippy-close {
+    display: none !important;
+  }
+  .tippy-arrow {
+    display: none;
+  }
+}
+
+```
